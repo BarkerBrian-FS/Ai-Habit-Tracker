@@ -38,3 +38,11 @@ app.get("/app/health", (req, res) =>
 
 app.use(notFound);
 app.use(errorHandler);
+
+const PORT = process.env.PORT || 8000;
+
+connectDB().then(() => {
+    app.listen(PORT, () => 
+        console.log(`server running on http://localhost:${PORT}`)
+    );
+});
