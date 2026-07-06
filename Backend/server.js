@@ -1,8 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./config/db";
-import { notFound, errorHandler } from "./middleware/errorHandler";
+import { connectDB } from "./config/db.js";
+import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -25,14 +25,13 @@ const corsOptions = {
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Autorization"],
+    allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
-app.get("/app/health", (req, res) => 
+app.get("/api/health", (req, res) => 
     res.json({ status: "ok", time: new Date().toISOString() })
 );
 
