@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
-
+import authRoutes from "./routes/auth.routes.js"
 const app = express();
 
 const allowedOrigins = (process.env.CLIENT_URL || "")
@@ -31,9 +31,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
+//Backend health route
 app.get("/api/health", (req, res) => 
     res.json({ status: "ok", time: new Date().toISOString() })
 );
+
+//Authentication Routes 
+app.use("/api/auth", authRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
