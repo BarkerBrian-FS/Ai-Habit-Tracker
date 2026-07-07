@@ -72,3 +72,17 @@ export const updateHabit = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const deleteHabit = async (req, res) => {
+    try {
+        const habit = await Habit.findOneAndDelete({
+            _id: req.params.id,
+            userId: req.user._id,
+        });
+        if(!habit) return res.status(404).json({ message: "Habit not found "});
+        await HabitLog.deleteMany({ habitId: habit._id, userId: req.user._id });
+        res.json({ message: "Habit Deleted" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
