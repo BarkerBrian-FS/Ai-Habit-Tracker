@@ -54,3 +54,16 @@ export const getToday = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getRange = async (req, res) => {
+    try {
+        const { start, end } = req.query;
+        const logs = await HabitLog.find({
+            userId: req.user._id,
+            completedDate: { $gte: start, $lte: end },
+        });
+        res.json(logs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
