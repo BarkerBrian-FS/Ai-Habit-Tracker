@@ -101,3 +101,21 @@ export const archiveHabit = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const reorderHabits = async (req, res) => {
+    try {
+        const { order } = req.body;
+        if(!Array.isArray(order))
+            return res.status(400).json({ message: "Order must be array" });
+        await Promise.all(
+            order.map((id, idx) => 
+            Habit.updateOne(
+                {_id: id, userId: req.user._id},
+                { $set: { order: idx } }
+            ))
+        );
+        res.json({ message: "Reordered" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
