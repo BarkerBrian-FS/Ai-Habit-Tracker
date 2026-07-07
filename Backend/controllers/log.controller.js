@@ -42,3 +42,15 @@ export const unmarkComplete = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getToday = async (req, res) => {
+    try {
+        const logs = await HabitLog.findOne({
+            userId: req.user._id,
+            completedDate: todayKey(),
+        });
+        res.json(logs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
