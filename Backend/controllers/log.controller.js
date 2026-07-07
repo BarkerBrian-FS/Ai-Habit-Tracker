@@ -67,3 +67,20 @@ export const getRange = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getHeatMap = async (req, res) => {
+    try {
+        const days = last90Days();
+        const logs = await HabitLog.find({
+            userId: req.user._id,
+            completedDate: { $gte: days[0], $lte: days[days.length-1] },
+        })
+        const counts = {};
+        for(const d of days) counts[d] = 0;
+        for(const l of logs) counts[l.completedDate] = (counts[l.completedDate] || 0) + 1;
+        const data = days.map((d) => ({ date: d, count: counts[d] || 0 }));
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
