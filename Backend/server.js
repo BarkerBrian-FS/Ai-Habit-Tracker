@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/auth.routes.js"
+import habitRoutes from "./routes/habits.routes.js"
 const app = express();
 
 const allowedOrigins = (process.env.CLIENT_URL || "")
@@ -38,6 +39,9 @@ app.get("/api/health", (req, res) =>
 
 //Authentication Routes 
 app.use("/api/auth", authRoutes);
+
+//habit routes
+app.use("/api/habits", habitRoutes)
 
 app.use(notFound);
 app.use(errorHandler);
