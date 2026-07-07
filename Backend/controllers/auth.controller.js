@@ -7,6 +7,7 @@ const signToken = (id) =>
     });
     
 export const register = async (req, res) => {
+    console.log("register hit")
     try {
 
         const { name, email, password } = req.body;
@@ -34,7 +35,15 @@ export const register = async (req, res) => {
             });
 
             const token = signToken(user._id);
-            res.status(200).json({ user, token });
+            res.status(201).json({ 
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    avatar: user.avatar,
+                }, 
+                token 
+            });
 
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -49,7 +58,7 @@ export const login = async (req, res) => {
 
         const user = await User.findOne({ email: email.toLowerCase() });
         if(!user || !(await user.matchPassword(password))){
-            return res.status(401).json({ message: "Invalid emaiil or password" });
+            return res.status(401).json({ message: "Invalid email or password" });
         }
         const token = signToken(user._id);
         res.json({ user, token });
