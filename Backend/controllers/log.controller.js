@@ -84,3 +84,48 @@ export const getHeatMap = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getHabitStats = async (req, res) => {
+    try {
+        const habit = await Habit.findOne({
+            _id: req.params.habitId,
+            userId: req.user._id,
+        });
+        if(!habit) return res.status(404).json({ message: "Habit not found" });
+
+        const logs = await HabitLog.find({
+            userId: req.user._id,
+            habitId: habit._id,
+        }).sort({ completedDate: -1 });
+
+        const dateKeys = logs.map((l) => l.completedDate);
+        const { current, longest } = calcStreak(dateKeys);
+
+        //completion rate since habit created
+        const createdKey = habit.createdAt.toISOString().slice(0, 10);
+        const today = todayKey();
+        const start = new Date(createdKey);
+        const end = new Date(today);
+        const totalDays = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24))) + 1;
+        const completionRate = Math.round((logs.length / totalDays) * 100);
+
+        //monthly breakdown
+        const monthly = {};
+        for(const l of logs){
+            const m = l.completedDate.slice(0, 7);
+            monthly[m] = (monthly[m] || 0) + 1;
+        }
+        res.json({
+            habit,
+            totalCompletions: logs.length,
+            currentStreak: current,
+            longestStreak: longest,
+            completionRate,
+            monthly,
+        });
+        res.json({ perHabit, days });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
