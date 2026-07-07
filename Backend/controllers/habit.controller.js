@@ -86,3 +86,18 @@ export const deleteHabit = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const archiveHabit = async (req, res) => {
+    try {
+        const habit = await Habit.findOne({
+            _id: req.params.id,
+            userId: req.user._id,
+        });
+        if(!habit) return res.status(404).json({ message: "Habit not found "});
+        habit.isArchived = !habit.isArchived;
+        await habit.save();
+        res.json(habit);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
