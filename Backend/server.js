@@ -5,6 +5,7 @@ import { connectDB } from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/auth.routes.js"
 import habitRoutes from "./routes/habits.routes.js"
+import logRoutes from "./routes/logs.routes.js"
 const app = express();
 
 const allowedOrigins = (process.env.CLIENT_URL || "")
@@ -41,7 +42,10 @@ app.get("/api/health", (req, res) =>
 app.use("/api/auth", authRoutes);
 
 //habit routes
-app.use("/api/habits", habitRoutes)
+app.use("/api/habits", habitRoutes);
+
+//Log Routes
+app.use("/api/logs", logRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
