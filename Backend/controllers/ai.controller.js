@@ -3,7 +3,6 @@ import HabitLog from "../models/HabitLog.js";
 import AiInsight from "../models/AiInsight.js";
 import { chatCompletion, SYSTEM_PROMPTS } from "../utils/aiService.js";
 import { lastNDays, calcStreak, todayKey } from "../utils/dateHelpers.js";
-import { RepeatWrapping } from "three";
 
 
 const buildWeeklyContext = async (userId) => {
@@ -45,7 +44,7 @@ export const weeklyReport = async (req, res) => {
         )
         .join("\n")}\n\nPlease write the personalized weekly report now.`;
 
-        const { content } = await chatCompletions({
+        const { content } = await chatCompletion({
             system: SYSTEM_PROMPTS.weekly,
             user: userMsg,
         });
@@ -132,7 +131,7 @@ export const recoveryPlan = async (req, res) => {
         const keys = logs.map((l) => l.completedDate);
         const { current, longest } = calcStreak(keys);
 
-        const userMsg = `Habit: ${habit.name}. (${habit.category}).\nDescription: ${habit.descritption || "none"}.\nCurrent streak: ${current} days. Longest streak: ${longest}. The user just broke the streak. Write a warm, actionable 3 day recovery plan.`;
+        const userMsg = `Habit: ${habit.name}. (${habit.category}).\nDescription: ${habit.description || "none"}.\nCurrent streak: ${current} days. Longest streak: ${longest}. The user just broke the streak. Write a warm, actionable 3 day recovery plan.`;
 
         const { content } = await chatCompletion({
             system: SYSTEM_PROMPTS.recovery,
@@ -144,6 +143,7 @@ export const recoveryPlan = async (req, res) => {
             content,
             meta: { habitId },
         })
+        res.json({ content });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -174,7 +174,7 @@ export const chatAnalysis = async (req, res) => {
                 const dow = new Date(l.completedDate).getDay();
                 byDow[dow] += 1;
             }
-            return `${h.name} (${h.category}): ${hLogs.length}/30 in the last 30 days, by weekday [Sun, Mon, Tue, Wed, Thu, Fri, Sat] $(${byDow})`;
+            return `${h.name} (${h.category}): ${hLogs.length}/30 in the last 30 days, by weekday [Sun, Mon, Tue, Wed, Thu, Fri, Sat] ${byDow})`;
         }).join("\n")
 
         const userMsg = `User question: "${question}"\n\n User Data (last 30 days):\n${context}\n\nAnswer now.`;
@@ -230,7 +230,7 @@ export const morningMotivation = async (req, res) => {
        const userMsg = `Today's habits and streaks: \n${ctx}\nDone today: ${done}/${total}. Write the morning motivation including this.`
 
        const { content } = await chatCompletion({
-            system: SYSTEM_PROMPTS.chat,
+            system: SYSTEM_PROMPTS.morning,
             user: userMsg,
             temperature: 0.8,
         });
