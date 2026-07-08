@@ -129,3 +129,35 @@ export const getHabitStats = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getAllStats = async (req, res) => {
+    try {
+        const habits = await Habit.find({
+            userId: req.user._id,
+            isArchived: false,
+        });
+        const days = lastNDays(30);
+        const logs = await HabitLog.find({
+            userId: req.user._id,
+            completedDate: { $gte: days[0], $lte: days[days.length - 1] },
+        });
+        const perHabit = habits.map((h) => {
+            const hLogs = logs.filter((l) => String(l.habitId) === String(h._id));
+            const keys = hLogs.map((l) => l.completedDate).sort().reverse();
+            const { current, longest } = calcStreak(keys);
+            return{
+                habitId: h._id,
+                name: h.name,
+                icon: h.icon,
+                color: h.color,
+                category: h.category,
+                completions30d: hLogs.length,
+                currentStreak: current,
+                longestStreak: longest,
+            };
+        });
+        res.json({ perHabit, days })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+};
