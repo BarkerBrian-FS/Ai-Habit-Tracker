@@ -3,9 +3,11 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
-import authRoutes from "./routes/auth.routes.js"
-import habitRoutes from "./routes/habits.routes.js"
-import logRoutes from "./routes/logs.routes.js"
+import authRoutes from "./routes/auth.routes.js";
+import habitRoutes from "./routes/habits.routes.js";
+import logRoutes from "./routes/logs.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
+
 const app = express();
 
 const allowedOrigins = (process.env.CLIENT_URL || "")
@@ -46,6 +48,9 @@ app.use("/api/habits", habitRoutes);
 
 //Log Routes
 app.use("/api/logs", logRoutes);
+
+//Ai Routes
+app.use("/api/ai", aiRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
