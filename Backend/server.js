@@ -40,6 +40,11 @@ app.get("/api/health", (req, res) =>
     res.json({ status: "ok", time: new Date().toISOString() })
 );
 
+app.use((req, res, next) => {
+    console.log(req.method, req.originalUrl);
+    next();
+});
+
 //Authentication Routes 
 app.use("/api/auth", authRoutes);
 
@@ -62,3 +67,4 @@ connectDB().then(() => {
         console.log(`server running on http://localhost:${PORT}`)
     );
 });
+

@@ -19,7 +19,8 @@ router.delete("/", unmarkComplete);
 router.get("/today", getToday);
 router.get("/range", getRange);
 router.get("/heatmap", getHeatMap);
-router.get("/stats", getHabitStats);
+router.get("/stats", getAllStats);
 router.get("/stats/:habitId", getHabitStats);
+
 
 export default router;
