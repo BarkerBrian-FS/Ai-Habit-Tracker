@@ -45,7 +45,7 @@ export const unmarkComplete = async (req, res) => {
 
 export const getToday = async (req, res) => {
     try {
-        const logs = await HabitLog.findOne({
+        const logs = await HabitLog.find({
             userId: req.user._id,
             completedDate: todayKey(),
         });
