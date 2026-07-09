@@ -49,13 +49,14 @@ export const weeklyReport = async (req, res) => {
             user: userMsg,
         });
 
-        await AIInsight.create({
+        await AiInsight.create({
             userId: req.user._id,
             type: "weekly",
             content,
         });
         res.json({ content });
     } catch (error) {
+        console.error("Weekly report error:", error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -241,6 +242,7 @@ export const morningMotivation = async (req, res) => {
         })
         res.json({ content })
     } catch (error) {
+        console.error(error)
         res.status(500).json({ message: error.message });
     }
 };
