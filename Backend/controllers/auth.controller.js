@@ -84,6 +84,7 @@ export const updateProfile = async (req, res) => {
         await user.save();
         res.json({ user });
     } catch (error) {
+        console.error(error)
         res.status(500).json({ message: error.message });
     }
 };
