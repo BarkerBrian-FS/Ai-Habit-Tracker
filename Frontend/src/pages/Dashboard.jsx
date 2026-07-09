@@ -49,6 +49,9 @@ export default function Dashboard() {
       ]);
 
       setHabits(habitsRes.data);
+
+      console.log("Today response:", todayRes.data);
+
       setTodayLogs(todayRes.data);
       setWeekLogs(rangeRes.data);
       setHeatmap(heatRes.data);
